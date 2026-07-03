@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 LABEL com.centurylinklabs.watchtower.enable="true"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates wget curl jq pwgen supervisor cron tar gzip procps \
+      ca-certificates wget curl jq pwgen supervisor cron tar gzip xz-utils bzip2 unzip procps \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /raptoreum/.raptoreumcore /var/log/supervisor

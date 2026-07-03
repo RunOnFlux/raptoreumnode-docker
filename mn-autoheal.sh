@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# HA self-healing controller for a Raptoreum smartnode on Flux (Tier 2).
-# Identical logic to the Dash MN controller (protx info / update_service are the
-# same Dash-derived RPCs); coin-specific values come from coin.env.
+# HA self-healing controller for a Flux masternode (Tier 2).
+# protx info / update_service are Dash-derived RPCs shared across every supported
+# coin; coin-specific values come from coin.env.
 #
-# Model: N instances (default 2), each a full raptoreumd on its OWN chain. Only the
+# Model: N instances (default 2), each a full node daemon on its OWN chain. Only the
 # LEADER (lowest-IP alive instance) holds the on-chain registration; the others are
 # warm standbys. On leader death the elected survivor points the registration at
 # itself via ProUpServTx. No forced failback. Standbys are not the registered
 # service, so they do not participate in quorums — no double-signing risk.
 #
-# REQUIRES: PROTXHASH, KEY (operator BLS priv), and a small RTM fee balance.
+# REQUIRES: PROTXHASH, KEY (operator BLS priv), and a small coin fee balance.
 # Injected by Flux: FLUX_NODE_HOST_IP, FLUX_APP_NAME.
 set -uo pipefail
 # shellcheck disable=SC1091
@@ -126,7 +126,7 @@ main() {
         FEE_ADDR=$($CLI getnewaddress "mn-fee" 2>/dev/null || true)
         [[ -n "$FEE_ADDR" ]] && echo "$FEE_ADDR" > "$FEE_ADDR_FILE"
     fi
-    log "this instance IP: ${MYIP:-unknown} | fee-source (fund a little RTM once): ${FEE_ADDR:-unavailable}"
+    log "this instance IP: ${MYIP:-unknown} | fee-source (fund a little ${COIN_TICKER:-coin} once): ${FEE_ADDR:-unavailable}"
     [[ -z "${PROTXHASH:-}" ]] && log "PROTXHASH not set — HA/self-heal DISABLED."
 
     while true; do

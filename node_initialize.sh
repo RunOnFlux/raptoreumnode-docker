@@ -56,6 +56,28 @@ if [[ -n "${WANIP:-}" ]]; then
     echo " externalip set to ${WANIP}:${MN_PORT}"
 fi
 
+# Optional fast-sync bootstrap. On a FRESH datadir (first deploy, or relocation to a
+# new node), fetch a recent chain snapshot so we catch up in minutes instead of from
+# genesis. Each instance keeps its OWN chain — we never syncthing-share a live DB.
+# tar xf auto-detects gz/xz/bz2. Set BOOTSTRAP_URL (+ optional BOOTSTRAP_SHA256).
+if [[ -n "${BOOTSTRAP_URL:-}" && ! -d "${DATADIR}/blocks" ]]; then
+    echo " No local chain; fetching bootstrap: ${BOOTSTRAP_URL}"
+    if curl -fSL -m 3600 "${BOOTSTRAP_URL}" -o /tmp/bootstrap.archive; then
+        if [[ -z "${BOOTSTRAP_SHA256:-}" ]] || echo "${BOOTSTRAP_SHA256}  /tmp/bootstrap.archive" | sha256sum -c -; then
+            if tar xf /tmp/bootstrap.archive -C "${DATADIR}"; then
+                echo " Bootstrap extracted; daemon will sync the remaining gap."
+            else
+                echo " WARNING: bootstrap extract failed; syncing normally."
+            fi
+        else
+            echo " WARNING: bootstrap checksum mismatch; ignoring snapshot, syncing normally."
+        fi
+        rm -f /tmp/bootstrap.archive
+    else
+        echo " WARNING: bootstrap download failed; syncing normally."
+    fi
+fi
+
 # Keep the daemon alive.
 while true; do
     if [[ -z "$(pgrep -x "${COIN_DAEMON}")" ]]; then

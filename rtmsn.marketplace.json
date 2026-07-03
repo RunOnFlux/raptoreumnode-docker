@@ -17,7 +17,9 @@
       "domains": [
         ""
       ],
-      "environmentParameters": [],
+      "environmentParameters": [
+        "BOOTSTRAP_URL=https://bootstrap.raptoreum.com/bootstraps/bootstrap.tar.xz"
+      ],
       "commands": [],
       "containerData": "/raptoreum/.raptoreumcore",
       "cpu": 2,
@@ -34,8 +36,9 @@
         },
         {
           "name": "PROTXHASH",
-          "description": "Your smartnode registration hash (proTxHash). Enables automatic on-chain IP updates so the node is never PoSe-banned after a relocation.",
-          "placeholder": "Enter your proTxHash"
+          "description": "Optional. Your smartnode registration hash (proTxHash). Enables automatic on-chain IP updates (HA failover) so the node is never PoSe-banned after a relocation.",
+          "placeholder": "Enter your proTxHash",
+          "optional": true
         }
       ]
     }
