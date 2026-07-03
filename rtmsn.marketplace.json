@@ -1,0 +1,45 @@
+{
+  "description": "Host your Raptoreum Smartnode on the Flux Network (HA: 2 redundant nodes with automatic failover). Collateral: 1,800,000 RTM.",
+  "priceUSD": 7,
+  "category": "Masternode",
+  "version": 8,
+  "name": "RaptoreumSN",
+  "instances": 2,
+  "staticip": true,
+  "compose": [
+    {
+      "name": "node",
+      "description": "The Raptoreum Smartnode container",
+      "repotag": "runonflux/raptoreumnode:latest",
+      "containerPorts": [
+        10226
+      ],
+      "domains": [
+        ""
+      ],
+      "environmentParameters": [],
+      "commands": [],
+      "containerData": "/raptoreum/.raptoreumcore",
+      "cpu": 2,
+      "ram": 4000,
+      "hdd": 60,
+      "ports": [
+        10226
+      ],
+      "userEnvironmentParameters": [
+        {
+          "name": "KEY",
+          "description": "Smartnode operator BLS private key",
+          "placeholder": "Enter your operator BLS private key"
+        },
+        {
+          "name": "PROTXHASH",
+          "description": "Your smartnode registration hash (proTxHash). Enables automatic on-chain IP updates so the node is never PoSe-banned after a relocation.",
+          "placeholder": "Enter your proTxHash"
+        }
+      ]
+    }
+  ],
+  "visible": true,
+  "enabled": true
+}
